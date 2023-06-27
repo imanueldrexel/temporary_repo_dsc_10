@@ -7,8 +7,10 @@ def create_table():
     conn.commit()
 
 def insert_to_table(value_1, value_2):
-    query = f"INSERT INTO tweet_cleaning (id, cleaned_new_tweet) VALUES ('{value_1}', '{value_2}');"
-    cursors = conn.execute(query)
+    value_1 = value_1.encode('utf-8')
+    value_2 = value_2.encode('utf-8')
+    query = f"INSERT INTO tweet_cleaning (id, cleaned_new_tweet) VALUES (?, ?);"
+    cursors = conn.execute(query, (value_1, value_2))
     conn.commit()
 
 def read_table(target_index=None, table_name=None):

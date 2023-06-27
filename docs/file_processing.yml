@@ -2,6 +2,11 @@ tags:
   - name: File Processing
 get:
   description: File yang akan diproses
+parameters:
+  - name: upload_file
+    in: formData
+    required: true
+    type: file
 responses:
   '200':
     description: Successful Responses

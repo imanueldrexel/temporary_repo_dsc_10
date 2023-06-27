@@ -43,14 +43,6 @@ swagger = Swagger(app,
 TABLE_NAME = "tweet_cleaning"
 
 
-# @swag_from("docs/hello_world.yml", methods=['GET'])
-# @app.route('/', methods= ['GET'])
-# def hello():
-#     # json_response = create_json_response(description="Menyapa Hello World", 
-#     #                                      data="Hello World 2")
-#     response_data = jsonify({"response":"SUCCESS"})
-#     return response_data
-
 @swag_from("docs/input_processing.yml", methods=['POST'])
 @app.route('/input-processing',methods=['POST'])
 def input_processing():
@@ -59,8 +51,8 @@ def input_processing():
     results = read_table(table_name=TABLE_NAME)
     last_index = len(results)
     insert_to_table(value_1=last_index, 
-    				value_2=cleaned_tweet, 
-    				table_name=TABLE_NAME)
+                    value_2=cleaned_tweet, 
+                    table_name=TABLE_NAME)
     
     response_data = jsonify({"response":"SUCCESS"})
     return response_data
@@ -69,19 +61,21 @@ def input_processing():
 @swag_from("docs/file_processing.yml", methods=['POST'])
 @app.route('/file-processing',methods=['POST'])
 def file_processing():
-	"""
-		Memproses file yang akan di upload di swagger_ui atau di HTML.
-	"""
-	# 1 method untuk upload file
-    df = pd.read_csv('data/data.csv', encoding='latin1') # baca datanya
+    """
+        Memproses file yang akan di upload di swagger_ui atau di HTML.
+    """
+    # 1 method untuk upload file
+    # df = pd.read_csv('data/data.csv', encoding='latin1') # baca datanya
     create_table() # create tablenya
-
+    df = request.form.get('upload_file')
+    print(df)
+    df = pd.read_csv(df)
     # iterasi untuk setiap tweet yang ada di kolom tweet yang ada di dataframe 'DF'
     for idx, tweet in enumerate(df['Tweet']):
         cleaned_tweet = processing_text(tweet) # process tweetnya
         insert_to_table(value_1=idx, 
-        				value_2=cleaned_tweet, 
-        				table_name=TABLE_NAME) # insert to table tweet yang sudah di cleaned.
+                        value_2=cleaned_tweet, 
+                        table_name=TABLE_NAME) # insert to table tweet yang sudah di cleaned.
     
     response_data = jsonify({"response":"SUCCESS"}) # karena kita ga butuh response apa2 dari proses ini, selama tidak ada error, return "SUCCESS"
     return response_data
