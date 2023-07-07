@@ -13,12 +13,17 @@ def insert_to_table(value_1, value_2):
     cursors = conn.execute(query, (value_1, value_2))
     conn.commit()
 
-def read_table(target_index=None, table_name=None):
-    if target_index == None:
-        results = conn.execute(f'select cleaned_new_tweet FROM {table_name};')
+def read_table(target_index=None, target_keywords=None):
+    if target_index == None and target_keywords is None:
+        results = conn.execute(f'select previous_text, cleaned_text FROM tweet_cleaning;')
         results = [result for result in results]
         return results
-    else:
-        results = conn.execute(f'select cleaned_new_tweet FROM {table_name} WHERE id = {target_index};')
+    elif target_keywords is not None and target_index is None:
+        query = f"select previous_text, cleaned_text FROM tweet_cleaning where previous_text like '%{target_keywords}%';"
+        results = conn.execute(query)
+        results = [result for result in results]
+        return results
+    elif target_keywords is None and target_index is not None:
+        results = conn.execute(f'select previous_text, cleaned_text FROM tweet_cleaning WHERE id = {target_index};')
         results = [result for result in results]
         return results[0]

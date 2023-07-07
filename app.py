@@ -82,8 +82,36 @@ def input_file_processing():
 
 @app.route('/read-database',methods=['GET', 'POST'])
 def read_database():
-    response_data = jsonify({"print":"PAGE_1"})
-    return response_data
+    if request.method == "POST":
+        showed_index=request.form['inputIndex']
+        showed_keywords = request.form['inputKeywords']
+        if len(showed_index)>0:
+            print("AAAAAAAAAA")
+            result_from_reading_database = read_table(target_index=showed_index)
+            previous_text=result_from_reading_database[0].decode('latin1')
+            cleaned_text=result_from_reading_database[1].decode('latin1')
+            json_response={'Index': showed_index,
+                           'Previous_text': previous_text,
+                           'Cleaned_text': cleaned_text
+                          }
+            json_response = jsonify(json_response)
+            return json_response
+        elif len(showed_keywords)>0:
+            print("BBBBBBBBB")
+            results = read_table(target_keywords=showed_keywords)
+            json_response={'showed_keywords': showed_keywords,
+                           'previous_text': results[0][0].decode('latin1'),
+                           'cleaned_text': results[0][1].decode('latin1')
+                          }
+            json_response = jsonify(json_response)
+            return json_response
+        else:
+            print("CCCCCCCC")
+            json_response={'ERROR_WARNING': "INDEX OR KEYWORDS IS NONE"}
+            json_response = jsonify(json_response)
+            return json_response
+    else:
+        return render_template("read_database.html")
 
 # @app.route('/',methods=['GET', "POST"])
 # def hello_world():
